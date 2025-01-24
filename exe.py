@@ -37,7 +37,7 @@ scard_number = [
     '6032986082866459'
 ]
 
-card_number = ['6032984041529904']
+card_number = ['6032984041529904','6032982540917745']
 
 with open('mediasi.json', 'r') as f:
     credentials = json.load(f)
