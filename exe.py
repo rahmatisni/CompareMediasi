@@ -364,16 +364,18 @@ def highlight_rows_three_sheets(workbook, sheet1_name, sheet2_name, sheet3_name,
                   card_col_idx_sheet4, red_fill)
 
     summary_sheet = workbook.create_sheet(title="Summary")
+    max_row_terbanyak = max(sheet1.max_row - 1, sheet2.max_row - 1, sheet3.max_row - 1, sheet4.max_row - 1)
+
     summary_sheet.append(
-        ["Sheet", "Total Records", "Data Unique", "Info", "Persentase"])
+        ["Sheet", "Total Records", "Data Unique", "Info", "Persentase", "Persentase Jumlah Compare"])
     summary_sheet.append(
-        [sheet1_name, sheet1.max_row - 1, len(unique_sheet1), f"-"])
+        [sheet1_name, sheet1.max_row - 1, len(unique_sheet1), f"-", f"{(sheet1.max_row - 1) / max_row_terbanyak * 100:.2f}%"])
     summary_sheet.append([sheet2_name, sheet2.max_row - 1, len(unique_sheet2), "Akurasi Mediasi DB HIST",
-                         f"{(sheet2.max_row - 1)/(len(unique_sheet1)+len(unique_sheet3)+len(unique_sheet4)+(sheet2.max_row - 1)) * 100:.2f}%"])
+                         f"{(sheet2.max_row - 1)/(len(unique_sheet1)+len(unique_sheet3)+len(unique_sheet4)+(sheet2.max_row - 1)) * 100:.2f}%", f"{(sheet2.max_row - 1) / max_row_terbanyak * 100:.2f}%"])
     summary_sheet.append([sheet3_name, sheet3.max_row - 1, len(unique_sheet3), "Akurasi DB SMT",
-                         f"{(sheet3.max_row - 1)/(len(unique_sheet1)+len(unique_sheet2)+len(unique_sheet4)+(sheet3.max_row - 1)) * 100:.2f}%"])
+                         f"{(sheet3.max_row - 1)/(len(unique_sheet2)+len(unique_sheet2)+len(unique_sheet4)+(sheet3.max_row - 1)) * 100:.2f}%", f"{(sheet3.max_row - 1) / max_row_terbanyak * 100:.2f}%"])
     summary_sheet.append([sheet4_name, sheet4.max_row - 1, len(unique_sheet4), "Akurasi Mediasi DB RUAS",
-                         f"{(sheet4.max_row - 1)/(len(unique_sheet1)+len(unique_sheet2)+len(unique_sheet3)+(sheet4.max_row - 1)) * 100:.2f}%"])
+                         f"{(sheet4.max_row - 1)/(len(unique_sheet1)+len(unique_sheet2)+len(unique_sheet3)+(sheet4.max_row - 1)) * 100:.2f}%", f"{(sheet4.max_row - 1) / max_row_terbanyak * 100:.2f}%"])
 
 # Main execution
 # card_number = input("Masukkan nomor kartu:
