@@ -37,6 +37,8 @@ card_number = [
     '6032986082866459'
 ]
 
+card_number = ['6032984041529904']
+
 with open('mediasi.json', 'r') as f:
     credentials = json.load(f)
 
