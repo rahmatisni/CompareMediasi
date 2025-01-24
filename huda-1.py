@@ -81,11 +81,11 @@ blue_fill = PatternFill(start_color="0000FF",
 yellow_fill = PatternFill(start_color="FFFF00",
                           end_color="FFFF00", fill_type="solid")
 
-purple_fill = PatternFill(start_color="800080", 
+purple_fill = PatternFill(start_color="800080",
                           end_color="800080", fill_type="solid")
-orange_fill = PatternFill(start_color="FFA500", 
+orange_fill = PatternFill(start_color="FFA500",
                           end_color="FFA500", fill_type="solid")
-pink_fill = PatternFill(start_color="FFC0CB", 
+pink_fill = PatternFill(start_color="FFC0CB",
                         end_color="FFC0CB", fill_type="solid")
 
 # Function to write JSON data to Excel
@@ -162,12 +162,11 @@ def write_to_excel(workbook, sheet_name, data):
 #         highlight(sheet3, overlap_2_3, date_col_idx_sheet3, light_green_fill)
 
 
-def highlight_rows_three_sheets(workbook, sheet1_name, sheet2_name, sheet3_name,sheet4_name, date_column_name="tgl_transaksi", card_column_name="no_kartu"):
+def highlight_rows_three_sheets(workbook, sheet1_name, sheet2_name, sheet3_name, sheet4_name, date_column_name="tgl_transaksi", card_column_name="no_kartu"):
     sheet1 = workbook[sheet1_name]
     sheet2 = workbook[sheet2_name]
     sheet3 = workbook[sheet3_name]
     sheet4 = workbook[sheet4_name]
-
 
     sheet1_entries = set()
     sheet2_entries = set()
@@ -179,7 +178,6 @@ def highlight_rows_three_sheets(workbook, sheet1_name, sheet2_name, sheet3_name,
     sheet2_header = [cell.value for cell in sheet2[1]]
     sheet3_header = [cell.value for cell in sheet3[1]]
     sheet4_header = [cell.value for cell in sheet4[1]]
-
 
     # Find column indexes
     date_col_idx_sheet1 = sheet1_header.index(
@@ -196,7 +194,7 @@ def highlight_rows_three_sheets(workbook, sheet1_name, sheet2_name, sheet3_name,
         date_column_name) + 1 if date_column_name in sheet3_header else None
     card_col_idx_sheet3 = sheet3_header.index(
         card_column_name) + 1 if card_column_name in sheet3_header else None
-    
+
     date_col_idx_sheet4 = sheet4_header.index(
         date_column_name) + 1 if date_column_name in sheet4_header else None
     card_col_idx_sheet4 = sheet4_header.index(
@@ -229,25 +227,32 @@ def highlight_rows_three_sheets(workbook, sheet1_name, sheet2_name, sheet3_name,
     overlap_3_4 = (sheet3_entries & sheet4_entries) - overlap_all
 
     # Overlap for combinations of 3 sheets
-    overlap_1_2_3 = (sheet1_entries & sheet2_entries & sheet3_entries) - overlap_all
-    overlap_1_2_4 = (sheet1_entries & sheet2_entries & sheet4_entries) - overlap_all
-    overlap_1_3_4 = (sheet1_entries & sheet3_entries & sheet4_entries) - overlap_all
-    overlap_2_3_4 = (sheet2_entries & sheet3_entries & sheet4_entries) - overlap_all
-
+    overlap_1_2_3 = (sheet1_entries & sheet2_entries &
+                     sheet3_entries) - overlap_all
+    overlap_1_2_4 = (sheet1_entries & sheet2_entries &
+                     sheet4_entries) - overlap_all
+    overlap_1_3_4 = (sheet1_entries & sheet3_entries &
+                     sheet4_entries) - overlap_all
+    overlap_2_3_4 = (sheet2_entries & sheet3_entries &
+                     sheet4_entries) - overlap_all
 
     # Unique entries
     # Determine unique entries for each sheet
-    unique_sheet1 = sheet1_entries - (sheet2_entries | sheet3_entries | sheet4_entries)
-    unique_sheet2 = sheet2_entries - (sheet1_entries | sheet3_entries | sheet4_entries)
-    unique_sheet3 = sheet3_entries - (sheet1_entries | sheet2_entries | sheet4_entries)
-    unique_sheet4 = sheet4_entries - (sheet1_entries | sheet2_entries | sheet3_entries)
-
+    unique_sheet1 = sheet1_entries - \
+        (sheet2_entries | sheet3_entries | sheet4_entries)
+    unique_sheet2 = sheet2_entries - \
+        (sheet1_entries | sheet3_entries | sheet4_entries)
+    unique_sheet3 = sheet3_entries - \
+        (sheet1_entries | sheet2_entries | sheet4_entries)
+    unique_sheet4 = sheet4_entries - \
+        (sheet1_entries | sheet2_entries | sheet3_entries)
 
     # Highlight rows
+
     def highlight(sheet, entries, date_col_idx, card_col_idx, fill):
         for row in sheet.iter_rows(min_row=2):
             entry = (str(row[date_col_idx - 1].value),
-                    str(row[card_col_idx - 1].value))
+                     str(row[card_col_idx - 1].value))
             if entry in entries:
                 for cell in row:
                     cell.fill = fill
@@ -255,78 +260,125 @@ def highlight_rows_three_sheets(workbook, sheet1_name, sheet2_name, sheet3_name,
     # Highlight entries for sheet1
     # Highlight entries for sheet1
 
-
     # Colors for highlighting
-    red_fill = PatternFill(start_color="FF0000", end_color="FF0000", fill_type="solid")  # Unique entries
-    green_fill = PatternFill(start_color="00FF00", end_color="00FF00", fill_type="solid")  # Overlap all sheets
-    blue_fill = PatternFill(start_color="0000FF", end_color="0000FF", fill_type="solid")  # Overlap 1 & 2
-    yellow_fill = PatternFill(start_color="FFFF00", end_color="FFFF00", fill_type="solid")  # Overlap 1 & 3
-    purple_fill = PatternFill(start_color="800080", end_color="800080", fill_type="solid")  # Overlap 1 & 4
-    light_green_fill = PatternFill(start_color="90EE90", end_color="90EE90", fill_type="solid")  # Overlap 2 & 3
-    orange_fill = PatternFill(start_color="FFA500", end_color="FFA500", fill_type="solid")  # Overlap 2 & 4
-    pink_fill = PatternFill(start_color="FFC0CB", end_color="FFC0CB", fill_type="solid")  # Overlap 3 & 4
+    red_fill = PatternFill(
+        start_color="FF0000", end_color="FF0000", fill_type="solid")  # Unique entries
+    green_fill = PatternFill(
+        start_color="00FF00", end_color="00FF00", fill_type="solid")  # Overlap all sheets
+    blue_fill = PatternFill(
+        start_color="0000FF", end_color="0000FF", fill_type="solid")  # Overlap 1 & 2
+    yellow_fill = PatternFill(
+        start_color="FFFF00", end_color="FFFF00", fill_type="solid")  # Overlap 1 & 3
+    purple_fill = PatternFill(
+        start_color="800080", end_color="800080", fill_type="solid")  # Overlap 1 & 4
+    light_green_fill = PatternFill(
+        start_color="90EE90", end_color="90EE90", fill_type="solid")  # Overlap 2 & 3
+    orange_fill = PatternFill(
+        start_color="FFA500", end_color="FFA500", fill_type="solid")  # Overlap 2 & 4
+    pink_fill = PatternFill(
+        start_color="FFC0CB", end_color="FFC0CB", fill_type="solid")  # Overlap 3 & 4
 
     # Fill colors for 3-sheet overlaps
-    light_blue_fill = PatternFill(start_color="ADD8E6", end_color="ADD8E6", fill_type="solid")  # Overlap 1, 2 & 3
-    light_yellow_fill = PatternFill(start_color="FFFFE0", end_color="FFFFE0", fill_type="solid")  # Overlap 1, 2 & 4
-    light_purple_fill = PatternFill(start_color="E6E6FA", end_color="E6E6FA", fill_type="solid")  # Overlap 1, 3 & 4
-    light_pink_fill = PatternFill(start_color="FFB6C1", end_color="FFB6C1", fill_type="solid")  # Overlap 2, 3 & 4
-
+    light_blue_fill = PatternFill(
+        start_color="ADD8E6", end_color="ADD8E6", fill_type="solid")  # Overlap 1, 2 & 3
+    light_yellow_fill = PatternFill(
+        start_color="FFFFE0", end_color="FFFFE0", fill_type="solid")  # Overlap 1, 2 & 4
+    light_purple_fill = PatternFill(
+        start_color="E6E6FA", end_color="E6E6FA", fill_type="solid")  # Overlap 1, 3 & 4
+    light_pink_fill = PatternFill(
+        start_color="FFB6C1", end_color="FFB6C1", fill_type="solid")  # Overlap 2, 3 & 4
 
     if date_col_idx_sheet1 and card_col_idx_sheet1:
-        highlight(sheet1, overlap_all, date_col_idx_sheet1, card_col_idx_sheet1, green_fill)
-        highlight(sheet1, overlap_1_2, date_col_idx_sheet1, card_col_idx_sheet1, blue_fill)
-        highlight(sheet1, overlap_1_3, date_col_idx_sheet1, card_col_idx_sheet1, yellow_fill)
-        highlight(sheet1, overlap_1_4, date_col_idx_sheet1, card_col_idx_sheet1, purple_fill)
-        highlight(sheet1, overlap_1_2_3, date_col_idx_sheet1, card_col_idx_sheet1, light_blue_fill)
-        highlight(sheet1, overlap_1_2_4, date_col_idx_sheet1, card_col_idx_sheet1, light_yellow_fill)
-        highlight(sheet1, overlap_1_3_4, date_col_idx_sheet1, card_col_idx_sheet1, light_purple_fill)
-        highlight(sheet1, unique_sheet1, date_col_idx_sheet1, card_col_idx_sheet1, red_fill)
+        highlight(sheet1, overlap_all, date_col_idx_sheet1,
+                  card_col_idx_sheet1, green_fill)
+        highlight(sheet1, overlap_1_2, date_col_idx_sheet1,
+                  card_col_idx_sheet1, blue_fill)
+        highlight(sheet1, overlap_1_3, date_col_idx_sheet1,
+                  card_col_idx_sheet1, yellow_fill)
+        highlight(sheet1, overlap_1_4, date_col_idx_sheet1,
+                  card_col_idx_sheet1, purple_fill)
+        highlight(sheet1, overlap_1_2_3, date_col_idx_sheet1,
+                  card_col_idx_sheet1, light_blue_fill)
+        highlight(sheet1, overlap_1_2_4, date_col_idx_sheet1,
+                  card_col_idx_sheet1, light_yellow_fill)
+        highlight(sheet1, overlap_1_3_4, date_col_idx_sheet1,
+                  card_col_idx_sheet1, light_purple_fill)
+        highlight(sheet1, unique_sheet1, date_col_idx_sheet1,
+                  card_col_idx_sheet1, red_fill)
 
     # Highlight entries for sheet2
     if date_col_idx_sheet2 and card_col_idx_sheet2:
-        highlight(sheet2, overlap_all, date_col_idx_sheet2, card_col_idx_sheet2, green_fill)
-        highlight(sheet2, overlap_1_2, date_col_idx_sheet2, card_col_idx_sheet2, blue_fill)
-        highlight(sheet2, overlap_2_3, date_col_idx_sheet2, card_col_idx_sheet2, light_green_fill)
-        highlight(sheet2, overlap_2_4, date_col_idx_sheet2, card_col_idx_sheet2, orange_fill)
-        highlight(sheet2, overlap_1_2_3, date_col_idx_sheet2, card_col_idx_sheet2, light_blue_fill)
-        highlight(sheet2, overlap_1_2_4, date_col_idx_sheet2, card_col_idx_sheet2, light_yellow_fill)
-        highlight(sheet2, overlap_2_3_4, date_col_idx_sheet2, card_col_idx_sheet2, light_pink_fill)
-        highlight(sheet2, unique_sheet2, date_col_idx_sheet2, card_col_idx_sheet2, red_fill)
+        highlight(sheet2, overlap_all, date_col_idx_sheet2,
+                  card_col_idx_sheet2, green_fill)
+        highlight(sheet2, overlap_1_2, date_col_idx_sheet2,
+                  card_col_idx_sheet2, blue_fill)
+        highlight(sheet2, overlap_2_3, date_col_idx_sheet2,
+                  card_col_idx_sheet2, light_green_fill)
+        highlight(sheet2, overlap_2_4, date_col_idx_sheet2,
+                  card_col_idx_sheet2, orange_fill)
+        highlight(sheet2, overlap_1_2_3, date_col_idx_sheet2,
+                  card_col_idx_sheet2, light_blue_fill)
+        highlight(sheet2, overlap_1_2_4, date_col_idx_sheet2,
+                  card_col_idx_sheet2, light_yellow_fill)
+        highlight(sheet2, overlap_2_3_4, date_col_idx_sheet2,
+                  card_col_idx_sheet2, light_pink_fill)
+        highlight(sheet2, unique_sheet2, date_col_idx_sheet2,
+                  card_col_idx_sheet2, red_fill)
 
     # Highlight entries for sheet3
     if date_col_idx_sheet3 and card_col_idx_sheet3:
-        highlight(sheet3, overlap_all, date_col_idx_sheet3, card_col_idx_sheet3, green_fill)
-        highlight(sheet3, overlap_1_3, date_col_idx_sheet3, card_col_idx_sheet3, yellow_fill)
-        highlight(sheet3, overlap_2_3, date_col_idx_sheet3, card_col_idx_sheet3, light_green_fill)
-        highlight(sheet3, overlap_3_4, date_col_idx_sheet3, card_col_idx_sheet3, pink_fill)
-        highlight(sheet3, overlap_1_2_3, date_col_idx_sheet3, card_col_idx_sheet3, light_blue_fill)
-        highlight(sheet3, overlap_1_3_4, date_col_idx_sheet3, card_col_idx_sheet3, light_purple_fill)
-        highlight(sheet3, overlap_2_3_4, date_col_idx_sheet3, card_col_idx_sheet3, light_pink_fill)
-        highlight(sheet3, unique_sheet3, date_col_idx_sheet3, card_col_idx_sheet3, red_fill)
+        highlight(sheet3, overlap_all, date_col_idx_sheet3,
+                  card_col_idx_sheet3, green_fill)
+        highlight(sheet3, overlap_1_3, date_col_idx_sheet3,
+                  card_col_idx_sheet3, yellow_fill)
+        highlight(sheet3, overlap_2_3, date_col_idx_sheet3,
+                  card_col_idx_sheet3, light_green_fill)
+        highlight(sheet3, overlap_3_4, date_col_idx_sheet3,
+                  card_col_idx_sheet3, pink_fill)
+        highlight(sheet3, overlap_1_2_3, date_col_idx_sheet3,
+                  card_col_idx_sheet3, light_blue_fill)
+        highlight(sheet3, overlap_1_3_4, date_col_idx_sheet3,
+                  card_col_idx_sheet3, light_purple_fill)
+        highlight(sheet3, overlap_2_3_4, date_col_idx_sheet3,
+                  card_col_idx_sheet3, light_pink_fill)
+        highlight(sheet3, unique_sheet3, date_col_idx_sheet3,
+                  card_col_idx_sheet3, red_fill)
 
     # Highlight entries for sheet4
     if date_col_idx_sheet4 and card_col_idx_sheet4:
-        highlight(sheet4, overlap_all, date_col_idx_sheet4, card_col_idx_sheet4, green_fill)
-        highlight(sheet4, overlap_1_4, date_col_idx_sheet4, card_col_idx_sheet4, purple_fill)
-        highlight(sheet4, overlap_2_4, date_col_idx_sheet4, card_col_idx_sheet4, orange_fill)
-        highlight(sheet4, overlap_3_4, date_col_idx_sheet4, card_col_idx_sheet4, pink_fill)
-        highlight(sheet4, overlap_1_2_4, date_col_idx_sheet4, card_col_idx_sheet4, light_yellow_fill)
-        highlight(sheet4, overlap_1_3_4, date_col_idx_sheet4, card_col_idx_sheet4, light_purple_fill)
-        highlight(sheet4, overlap_2_3_4, date_col_idx_sheet4, card_col_idx_sheet4, light_pink_fill)
-        highlight(sheet4, unique_sheet4, date_col_idx_sheet4, card_col_idx_sheet4, red_fill)
-
+        highlight(sheet4, overlap_all, date_col_idx_sheet4,
+                  card_col_idx_sheet4, green_fill)
+        highlight(sheet4, overlap_1_4, date_col_idx_sheet4,
+                  card_col_idx_sheet4, purple_fill)
+        highlight(sheet4, overlap_2_4, date_col_idx_sheet4,
+                  card_col_idx_sheet4, orange_fill)
+        highlight(sheet4, overlap_3_4, date_col_idx_sheet4,
+                  card_col_idx_sheet4, pink_fill)
+        highlight(sheet4, overlap_1_2_4, date_col_idx_sheet4,
+                  card_col_idx_sheet4, light_yellow_fill)
+        highlight(sheet4, overlap_1_3_4, date_col_idx_sheet4,
+                  card_col_idx_sheet4, light_purple_fill)
+        highlight(sheet4, overlap_2_3_4, date_col_idx_sheet4,
+                  card_col_idx_sheet4, light_pink_fill)
+        highlight(sheet4, unique_sheet4, date_col_idx_sheet4,
+                  card_col_idx_sheet4, red_fill)
 
     summary_sheet = workbook.create_sheet(title="Summary")
-    summary_sheet.append(["Sheet", "Total Records", "Data Unique", "Info", "Persentase"])
-    summary_sheet.append([sheet1_name, sheet1.max_row - 1, len(unique_sheet1), f"-"])
-    summary_sheet.append([sheet2_name, sheet2.max_row - 1, len(unique_sheet2),"Akurasi Mediasi DB HIST", f"{(sheet2.max_row - 1)/(len(unique_sheet1)+len(unique_sheet3)+len(unique_sheet4)+(sheet2.max_row - 1)) * 100:.2f}%"])
-    summary_sheet.append([sheet3_name, sheet3.max_row - 1, len(unique_sheet3), "Akurasi DB SMT", f"{(sheet3.max_row - 1)/(len(unique_sheet1)+len(unique_sheet2)+len(unique_sheet4)+(sheet3.max_row - 1)) * 100:.2f}%"])
-    summary_sheet.append([sheet4_name, sheet4.max_row - 1, len(unique_sheet4),"Akurasi Mediasi DB RUAS", f"{(sheet4.max_row - 1)/(len(unique_sheet1)+len(unique_sheet2)+len(unique_sheet3)+(sheet4.max_row - 1)) * 100:.2f}%"])
+    summary_sheet.append(
+        ["Sheet", "Total Records", "Data Unique", "Info", "Persentase"])
+    summary_sheet.append(
+        [sheet1_name, sheet1.max_row - 1, len(unique_sheet1), f"-"])
+    summary_sheet.append([sheet2_name, sheet2.max_row - 1, len(unique_sheet2), "Akurasi Mediasi DB HIST",
+                         f"{(sheet2.max_row - 1)/(len(unique_sheet1)+len(unique_sheet3)+len(unique_sheet4)+(sheet2.max_row - 1)) * 100:.2f}%"])
+    summary_sheet.append([sheet3_name, sheet3.max_row - 1, len(unique_sheet3), "Akurasi DB SMT",
+                         f"{(sheet3.max_row - 1)/(len(unique_sheet1)+len(unique_sheet2)+len(unique_sheet4)+(sheet3.max_row - 1)) * 100:.2f}%"])
+    summary_sheet.append([sheet4_name, sheet4.max_row - 1, len(unique_sheet4), "Akurasi Mediasi DB RUAS",
+                         f"{(sheet4.max_row - 1)/(len(unique_sheet1)+len(unique_sheet2)+len(unique_sheet3)+(sheet4.max_row - 1)) * 100:.2f}%"])
 
 # Main execution
 # card_number = input("Masukkan nomor kartu:
 # Daftar nomor kartu
+
 
 # Menambahkan data baru dengan menghapus '0' di awal
 new_card_numbers = [card[1:] for card in card_number if card.startswith('0')]
@@ -347,7 +399,7 @@ conn = mysql.connector.connect(
 
 query1_results = []
 query2_results = []
-query3_results = []jmt0Op3r4t0r!!
+query3_results = []
 query4_results = []
 
 
@@ -363,9 +415,9 @@ try:
         print("No databases found containing 'lattol'")
     else:
         for db_name in databases:
-            print(f"Checking database Copy: {db_name}")
+            print(f"Checking DB Copy: {db_name}")
             signal.signal(signal.SIGALRM, timeout_handler)
-            signal.alarm(600)
+            signal.alarm(1200)
             try:
                 # #
                 #                 query = f"""
@@ -434,7 +486,7 @@ try:
   AND tgl_transaksi <= CURDATE();
     """)
 
-    print(f"Checking database: {db_name}")
+    print(f"Checking DB Center HIST: {db_name}")
 
     columns = [col[0] for col in cursor.description]
     query2_results.extend([convert_for_json(dict(zip(columns, row)))
@@ -494,7 +546,7 @@ for credential in credentials:
             print("No databases found containing 'lattol'")
         else:
             for db_name in databases:
-                print(f"Checking database Ruas: {db_name}")
+                print(f"Checking DB Ruas: {db_name}")
                 signal.signal(signal.SIGALRM, timeout_handler)
                 signal.alarm(600)
                 try:
@@ -534,7 +586,6 @@ for credential in credentials:
                         AND tgl_transaksi >= DATE_FORMAT(CURDATE(), '%Y-%m-01')
                         AND tgl_transaksi <= CURDATE();
                     """
-                    print('querynya', query)
                     cursor.execute(query)
                     columns = [col[0] for col in cursor.description]
                     results = cursor.fetchall()
@@ -560,7 +611,7 @@ write_to_excel(workbook, "SMT DB Hist", query3_results)
 write_to_excel(workbook, "Mediasi DB RUAS", query4_results)
 
 highlight_rows_three_sheets(
-    workbook, "Mediasi Copy", "Mediasi DB Hist", "SMT DB Hist","Mediasi DB RUAS")
+    workbook, "Mediasi Copy", "Mediasi DB Hist", "SMT DB Hist", "Mediasi DB RUAS")
 
 # output_file = f"{card_number}_{today_date}_compare.xlsx"
 output_file = f"{today_date}_compare.xlsx"
