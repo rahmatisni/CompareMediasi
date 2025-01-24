@@ -342,13 +342,12 @@ card_number_str = ', '.join(f"'{cn}'" for cn in card_number)
 conn = mysql.connector.connect(
     host="172.16.4.8",
     user="jmto",
-    password="@jmt02024!#",
-    connection_timeout=10
+    password="@jmt02024!#"
 )
 
 query1_results = []
 query2_results = []
-query3_results = []
+query3_results = []jmt0Op3r4t0r!!
 query4_results = []
 
 
@@ -450,8 +449,7 @@ try:
     conn_additional = mysql.connector.connect(
         host="20.10.20.99",
         user="travoyhis",
-        password="DbHistoryTravoy2021!",
-        connection_timeout=10
+        password="DbHistoryTravoy2021!"
     )
     cursor_additional = conn_additional.cursor()
 
