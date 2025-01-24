@@ -6,7 +6,7 @@ from decimal import Decimal
 from openpyxl import Workbook
 from openpyxl.styles import PatternFill
 
-card_number = [
+scard_number = [
     '6032982888011432',
     '6032981030212971',
     '6032982601347550',
