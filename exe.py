@@ -106,61 +106,6 @@ def write_to_excel(workbook, sheet_name, data):
         values = list(row.values())
         sheet.append(values)
 
-# Highlight rows based on three sheets comparison
-# def highlight_rows_three_sheets(workbook, sheet1_name, sheet2_name, sheet3_name, date_column_name="tgl_transaksi"):
-#     sheet1 = workbook[sheet1_name]
-#     sheet2 = workbook[sheet2_name]
-#     sheet3 = workbook[sheet3_name]
-
-#     sheet1_dates = set()
-#     sheet2_dates = set()
-#     sheet3_dates = set()
-
-#     # Extract headers
-#     sheet1_header = [cell.value for cell in sheet1[1]]
-#     sheet2_header = [cell.value for cell in sheet2[1]]
-#     sheet3_header = [cell.value for cell in sheet3[1]]
-
-#     # Find column indexes
-#     date_col_idx_sheet1 = sheet1_header.index(date_column_name) + 1 if date_column_name in sheet1_header else None
-#     date_col_idx_sheet2 = sheet2_header.index(date_column_name) + 1 if date_column_name in sheet2_header else None
-#     date_col_idx_sheet3 = sheet3_header.index(date_column_name) + 1 if date_column_name in sheet3_header else None
-
-#     # Collect dates
-#     if date_col_idx_sheet1:
-#         sheet1_dates = {str(row[date_col_idx_sheet1 - 1].value) for row in sheet1.iter_rows(min_row=2) if row[date_col_idx_sheet1 - 1].value}
-#     if date_col_idx_sheet2:
-#         sheet2_dates = {str(row[date_col_idx_sheet2 - 1].value) for row in sheet2.iter_rows(min_row=2) if row[date_col_idx_sheet2 - 1].value}
-#     if date_col_idx_sheet3:
-#         sheet3_dates = {str(row[date_col_idx_sheet3 - 1].value) for row in sheet3.iter_rows(min_row=2) if row[date_col_idx_sheet3 - 1].value}
-
-#     # Determine overlaps
-#     overlap_all = sheet1_dates & sheet2_dates & sheet3_dates
-#     overlap_1_2 = (sheet1_dates & sheet2_dates) - overlap_all
-#     overlap_2_3 = (sheet2_dates & sheet3_dates) - overlap_all
-#     overlap_1_3 = (sheet1_dates & sheet3_dates) - overlap_all
-
-#     # Highlight rows
-#     def highlight(sheet, dates, col_idx, fill):
-#         for row in sheet.iter_rows(min_row=2):
-#             if str(row[col_idx - 1].value) in dates:
-#                 for cell in row:
-#                     cell.fill = fill
-
-#     if date_col_idx_sheet1:
-#         highlight(sheet1, overlap_all, date_col_idx_sheet1, green_fill)
-#         highlight(sheet1, overlap_1_2, date_col_idx_sheet1, blue_fill)
-#         highlight(sheet1, overlap_1_3, date_col_idx_sheet1, yellow_fill)
-
-#     if date_col_idx_sheet2:
-#         highlight(sheet2, overlap_all, date_col_idx_sheet2, green_fill)
-#         highlight(sheet2, overlap_1_2, date_col_idx_sheet2, blue_fill)
-#         highlight(sheet2, overlap_2_3, date_col_idx_sheet2, light_green_fill)
-#     if date_col_idx_sheet3:
-#         highlight(sheet3, overlap_all, date_col_idx_sheet3, green_fill)
-#         highlight(sheet3, overlap_1_3, date_col_idx_sheet3, yellow_fill)
-#         highlight(sheet3, overlap_2_3, date_col_idx_sheet3, light_green_fill)
-
 
 def highlight_rows_three_sheets(workbook, sheet1_name, sheet2_name, sheet3_name, sheet4_name, date_column_name="tgl_transaksi", card_column_name="no_kartu"):
     sheet1 = workbook[sheet1_name]
