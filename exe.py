@@ -510,8 +510,8 @@ for credential in credentials:
                             etoll_hash,
                             tarif,
                             sisa_saldo,
-                            created_at,
-                            TIMESTAMPDIFF(MINUTE, created_at, tgl_transaksi) AS selisih_menit
+                            create_at,
+                            TIMESTAMPDIFF(MINUTE, create_at, tgl_transaksi) AS selisih_menit
                             FROM {db_name}.jid_transaksi_deteksi
                             WHERE etoll_id IN ({card_number_str})
                             AND tarif != 0 
