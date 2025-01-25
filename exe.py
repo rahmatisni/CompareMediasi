@@ -616,8 +616,8 @@ highlight_rows_three_sheets(
     workbook, "Mediasi Copy", "Mediasi DB Hist", "SMT DB Hist", "Mediasi DB RUAS")
 
 # output_file = f"{card_number}_{today_date}_compare.xlsx"
-output_file = f"resi_compare.xlsx"
-
+output_file = f"folder/{today_date}_compare.xlsx"
+# tambahkan folder "folder"
 workbook.save(output_file)
 print(f"Nomor Kartu {card_number}")
 
