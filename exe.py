@@ -43,6 +43,7 @@ with open('mediasi.json', 'r') as f:
     credentials = json.load(f)
 
 today_date = datetime.now().strftime("%Y%m%d")  # Format: YYYYMMDD
+timenow = datetime.now()
 
 # Timeout handler function
 
@@ -202,9 +203,6 @@ def highlight_rows_three_sheets(workbook, sheet1_name, sheet2_name, sheet3_name,
                 for cell in row:
                     cell.fill = fill
 
-    # Highlight entries for sheet1
-    # Highlight entries for sheet1
-
     # Colors for highlighting
     red_fill = PatternFill(
         start_color="FF0000", end_color="FF0000", fill_type="solid")  # Unique entries
@@ -321,7 +319,7 @@ def highlight_rows_three_sheets(workbook, sheet1_name, sheet2_name, sheet3_name,
                          f"{(sheet3.max_row - 1)/(len(unique_sheet2)+len(unique_sheet2)+len(unique_sheet4)+(sheet3.max_row - 1)) * 100:.2f}%", f"{(sheet3.max_row - 1) / max_row_terbanyak * 100:.2f}%"])
     summary_sheet.append([sheet4_name, sheet4.max_row - 1, len(unique_sheet4), "Akurasi Mediasi DB RUAS",
                          f"{(sheet4.max_row - 1)/(len(unique_sheet1)+len(unique_sheet2)+len(unique_sheet3)+(sheet4.max_row - 1)) * 100:.2f}%", f"{(sheet4.max_row - 1) / max_row_terbanyak * 100:.2f}%"])
-
+    summary_sheet.append(['Waktu Tarik',timenow,'',''])
 # Main execution
 # card_number = input("Masukkan nomor kartu:
 # Daftar nomor kartu
@@ -366,51 +364,40 @@ try:
             signal.signal(signal.SIGALRM, timeout_handler)
             signal.alarm(1200)
             try:
-                # #
-                #                 query = f"""
-                #                     SELECT * FROM {db_name}.jid_transaksi_deteksi
-                #                     WHERE (etoll_id = '{card_number}' OR etoll_id = {int(card_number)})
-                #                     AND tgl_transaksi >= DATE_FORMAT(CURDATE(), '%Y-%m-01')
-                #                     AND tgl_transaksi <= CURDATE();
-                #                 """
-
-                # query = f"""
-                #     SELECT *, etoll_id AS nomor_kartu
-                #     FROM {db_name}.jid_transaksi_deteksi
-                #     WHERE etoll_id IN ({card_number_str})
-                #     AND tgl_transaksi >= DATE_FORMAT(CURDATE(), '%Y-%m-01')
-                #     AND tgl_transaksi <= CURDATE();
-                # """
                 query = f"""
-                    SELECT
-                    id,
-                        etoll_id as 'no_kartu',
-                        ruas_id,
-                        asal_gerbang_id,
-                        gerbang_id,
-                        gardu_id,
-                        tgl_lap,
-                        shift,
-                        perioda,
-                        no_resi,
-                        gol_sah,
-                        metoda_bayar_sah,
-                        jenis_notran,
-                        validasi_notran,
-                        tgl_transaksi,
-                        kspt_id,
-                        pultol_id,
-                        tgl_entrance,
-                        id_obu,
-                        etoll_hash,
-                        tarif,
-                        sisa_saldo
-                        FROM {db_name}.jid_transaksi_deteksi
-                        WHERE etoll_id IN ({card_number_str})
-                        and tarif != 0 and etoll_hash != 0
-                        AND tgl_transaksi >= DATE_FORMAT(CURDATE(), '%Y-%m-01')
-                        AND tgl_transaksi <= CURDATE();
-                    """
+                            SELECT
+                            id,
+                            etoll_id as 'no_kartu',
+                            ruas_id,
+                            asal_gerbang_id,
+                            gerbang_id,
+                            gardu_id,
+                            tgl_lap,
+                            shift,
+                            perioda,
+                            no_resi,
+                            gol_sah,
+                            metoda_bayar_sah,
+                            jenis_notran,
+                            validasi_notran,
+                            tgl_transaksi,
+                            kspt_id,
+                            pultol_id,
+                            tgl_entrance,
+                            id_obu,
+                            etoll_hash,
+                            tarif,
+                            sisa_saldo,
+                            created_at,
+                            TIMESTAMPDIFF(MINUTE, created_at, tgl_transaksi) AS selisih_menit
+                            FROM {db_name}.jid_transaksi_deteksi
+                            WHERE etoll_id IN ({card_number_str})
+                            AND tarif != 0 
+                            AND etoll_hash != 0
+                            AND tgl_transaksi >= DATE_FORMAT(CURDATE(), '%Y-%m-01')
+                            AND tgl_transaksi <= CURDATE();
+                        """
+
 
                 cursor.execute(query)
                 columns = [col[0] for col in cursor.description]
@@ -427,10 +414,11 @@ try:
 
     # Query 2
     cursor.execute(f"""
-    SELECT * FROM travoy_db_history.tx_card_toll_history
-    WHERE no_kartu IN ({card_number_str})
- AND tgl_transaksi >= DATE_FORMAT(CURDATE(), '%Y-%m-01')
-  AND tgl_transaksi <= CURDATE();
+        SELECT *, TIMESTAMPDIFF(MINUTE, created_at, tgl_transaksi) AS selisih_menit
+        FROM travoy_db_history.tx_card_toll_history
+        WHERE no_kartu IN ({card_number_str})
+        AND tgl_transaksi >= DATE_FORMAT(CURDATE(), '%Y-%m-01')
+        AND tgl_transaksi <= CURDATE();
     """)
 
     print(f"Checking DB Center HIST: {db_name}")
@@ -453,8 +441,9 @@ try:
     cursor_additional = conn_additional.cursor()
 
     cursor_additional.execute(f"""
-        SELECT * FROM travoy_db_history.tx_card_toll_history
-                        WHERE no_kartu IN ({card_number_str})
+        SELECT *, TIMESTAMPDIFF(MINUTE, created_at, tgl_transaksi) AS selisih_menit
+        FROM travoy_db_history.tx_card_toll_history
+        WHERE no_kartu IN ({card_number_str})
         AND tgl_transaksi >= DATE_FORMAT(CURDATE(), '%Y-%m-01')
         AND tgl_transaksi <= CURDATE()
         GROUP BY no_kartu, tgl_transaksi;
@@ -497,41 +486,38 @@ for credential in credentials:
                 signal.signal(signal.SIGALRM, timeout_handler)
                 signal.alarm(600)
                 try:
-                    #                     query = f"""
-                    #                     SELECT * FROM {db_name}.jid_transaksi_deteksi
-                    #                     WHERE etoll_id = '{card_number}' AND tgl_transaksi >= DATE_FORMAT(CURDATE(), '%Y-%m-01')
-                    #   AND tgl_transaksi <= CURDATE();
-                    #                     """
-
                     query = f"""
-                    SELECT
-                    id,
-                        etoll_id as 'no_kartu',
-                        ruas_id,
-                        asal_gerbang_id,
-                        gerbang_id,
-                        gardu_id,
-                        tgl_lap,
-                        shift,
-                        perioda,
-                        no_resi,
-                        gol_sah,
-                        metoda_bayar_sah,
-                        jenis_notran,
-                        validasi_notran,
-                        tgl_transaksi,
-                        kspt_id,
-                        pultol_id,
-                        tgl_entrance,
-                        id_obu,
-                        etoll_hash,
-                        tarif,
-                        sisa_saldo
-                        FROM {db_name}.jid_transaksi_deteksi
-                        WHERE etoll_id IN ({card_number_str})
-                        and tarif != 0 and etoll_hash != 0
-                        AND tgl_transaksi >= DATE_FORMAT(CURDATE(), '%Y-%m-01')
-                        AND tgl_transaksi <= CURDATE();
+                            SELECT
+                            id,
+                            etoll_id as 'no_kartu',
+                            ruas_id,
+                            asal_gerbang_id,
+                            gerbang_id,
+                            gardu_id,
+                            tgl_lap,
+                            shift,
+                            perioda,
+                            no_resi,
+                            gol_sah,
+                            metoda_bayar_sah,
+                            jenis_notran,
+                            validasi_notran,
+                            tgl_transaksi,
+                            kspt_id,
+                            pultol_id,
+                            tgl_entrance,
+                            id_obu,
+                            etoll_hash,
+                            tarif,
+                            sisa_saldo,
+                            created_at,
+                            TIMESTAMPDIFF(MINUTE, created_at, tgl_transaksi) AS selisih_menit
+                            FROM {db_name}.jid_transaksi_deteksi
+                            WHERE etoll_id IN ({card_number_str})
+                            AND tarif != 0 
+                            AND etoll_hash != 0
+                            AND tgl_transaksi >= DATE_FORMAT(CURDATE(), '%Y-%m-01')
+                            AND tgl_transaksi <= CURDATE();
                     """
                     cursor.execute(query)
                     columns = [col[0] for col in cursor.description]
