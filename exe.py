@@ -388,7 +388,7 @@ try:
                             etoll_hash,
                             tarif,
                             sisa_saldo,
-                            created_at,
+                            create_at,
                             TIMESTAMPDIFF(MINUTE, create_at, tgl_transaksi) AS selisih_menit
                             FROM {db_name}.jid_transaksi_deteksi
                             WHERE etoll_id IN ({card_number_str})
