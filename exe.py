@@ -399,10 +399,7 @@ try:
                 query = f"""
                             SELECT
                             id,
-                            CASE 
-                                WHEN LEFT(etoll_id, 1) = '1' THEN CONCAT('0', etoll_id)
-                                ELSE etoll_id
-                                END AS no_kartu,
+                            etoll_id as 'no_kartu',
                             ruas_id,
                             asal_gerbang_id,
                             gerbang_id,
@@ -431,7 +428,7 @@ try:
                             AND etoll_hash != 0
                             AND tgl_transaksi >= DATE_FORMAT(CURDATE(), '%Y-%m-01')
                             AND tgl_transaksi <= CURDATE();
-                    """
+                        """
 
 
                 cursor.execute(query)
@@ -459,6 +456,13 @@ try:
     print(f"Checking DB Center HIST: {db_name}")
 
     columns = [col[0] for col in cursor.description]
+    for row in cursor.fetchall():
+        row_dict = dict(zip(columns, row))
+        
+        # Map nilai `no_kartu`
+        if row_dict['no_kartu'].startswith('1'):
+            row_dict['no_kartu'] = f"0{row_dict['no_kartu']}"
+
     query2_results.extend([convert_for_json(dict(zip(columns, row)))
                           for row in cursor.fetchall()])
 
@@ -524,10 +528,7 @@ for credential in credentials:
                     query = f"""
                             SELECT
                             id,
-                            CASE 
-                                WHEN LEFT(etoll_id, 1) = '1' THEN CONCAT('0', etoll_id)
-                                ELSE etoll_id
-                                END AS no_kartu,
+                            etoll_id as 'no_kartu',
                             ruas_id,
                             asal_gerbang_id,
                             gerbang_id,
