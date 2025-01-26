@@ -135,7 +135,7 @@ def write_to_excel(workbook, sheet_name, data):
         sheet.append(values)
 
 
-def highlight_rows_three_sheets(workbook, sheet1_name, sheet2_name, sheet3_name, sheet4_name, date_column_name="tgl_transaksi", card_column_name="no_kartu"):
+def highlight_rows_three_sheets(workbook, sheet1_name, sheet2_name, sheet3_name, sheet4_name, date_column_name="tgl_transaksi", card_column_name="no_kartu_formatted"):
     sheet1 = workbook[sheet1_name]
     sheet2 = workbook[sheet2_name]
     sheet3 = workbook[sheet3_name]
@@ -399,6 +399,10 @@ try:
                 query = f"""
                             SELECT
                             id,
+                            CASE
+                                WHEN LEFT ( etoll_id, 1 ) = '1' THEN
+                                CONCAT( '0', etoll_id ) ELSE etoll_id 
+                            END AS no_kartu_formatted,
                             etoll_id as 'no_kartu',
                             ruas_id,
                             asal_gerbang_id,
@@ -446,7 +450,12 @@ try:
 
     # Query 2
     cursor.execute(f"""
-        SELECT *, TIMESTAMPDIFF(MINUTE, created_at, tgl_transaksi) AS selisih_menit
+        SELECT *, 
+          CASE
+            WHEN LEFT ( no_kartu, 1 ) = '1' THEN
+            CONCAT( '0', no_kartu ) ELSE no_kartu 
+        END AS no_kartu_formatted,
+        TIMESTAMPDIFF(MINUTE, created_at, tgl_transaksi) AS selisih_menit
         FROM travoy_db_history.tx_card_toll_history
         WHERE no_kartu IN ({card_number_str})
         AND tgl_transaksi >= DATE_FORMAT(CURDATE(), '%Y-%m-01')
@@ -473,7 +482,12 @@ try:
     cursor_additional = conn_additional.cursor()
 
     cursor_additional.execute(f"""
-        SELECT *, TIMESTAMPDIFF(MINUTE, created_at, tgl_transaksi) AS selisih_menit
+        SELECT *,
+          CASE
+            WHEN LEFT ( no_kartu, 1 ) = '1' THEN
+            CONCAT( '0', no_kartu ) ELSE no_kartu 
+        END AS no_kartu_formatted,
+        TIMESTAMPDIFF(MINUTE, created_at, tgl_transaksi) AS selisih_menit
         FROM travoy_db_history.tx_card_toll_history
         WHERE no_kartu IN ({card_number_str})
         AND tgl_transaksi >= DATE_FORMAT(CURDATE(), '%Y-%m-01')
@@ -521,6 +535,10 @@ for credential in credentials:
                     query = f"""
                             SELECT
                             id,
+                            CASE
+                                WHEN LEFT ( etoll_id, 1 ) = '1' THEN
+                                CONCAT( '0', etoll_id ) ELSE etoll_id 
+                            END AS no_kartu_formatted,
                             etoll_id as 'no_kartu',
                             ruas_id,
                             asal_gerbang_id,
