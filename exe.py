@@ -38,7 +38,7 @@ scard_number = [
     '6032986082866459'
 ]
 
-card_number = ['6032984041529904', '6032982540917745', '0145008201654166']
+card_number = ['6032984041529904','6032982540917745','0145008201654166']
 
 with open('mediasi.json', 'r') as f:
     credentials = json.load(f)
@@ -56,18 +56,15 @@ card_number_str = ', '.join(f"'{cn}'" for cn in card_number)
 
 # Timeout handler function
 
-
 def calculate_mode_and_average(sheet, header_name):
     try:
         # Ambil semua nilai dari kolom sesuai header
         header_row = [cell.value for cell in sheet[1]]
         if header_name in header_row:
             col_index = header_row.index(header_name) + 1
-            values = [sheet.cell(row=i, column=col_index).value for i in range(
-                2, sheet.max_row + 1)]
+            values = [sheet.cell(row=i, column=col_index).value for i in range(2, sheet.max_row + 1)]
             # Filter nilai None sebelum mencari modus dan rata-rata
-            filtered_values = [
-                v for v in values if isinstance(v, (int, float))]
+            filtered_values = [v for v in values if isinstance(v, (int, float))]
             calc_mode = mode(filtered_values) if filtered_values else "-"
             calc_average = mean(filtered_values) if filtered_values else "-"
             return calc_mode, calc_average
@@ -75,6 +72,7 @@ def calculate_mode_and_average(sheet, header_name):
             return "-", "-"
     except StatisticsError:
         return "-", "-"  # Jika tidak ada modus (semua nilai unik atau kosong)
+
 
 
 def timeout_handler(signum, frame):
@@ -336,19 +334,17 @@ def highlight_rows_three_sheets(workbook, sheet1_name, sheet2_name, sheet3_name,
                   card_col_idx_sheet4, red_fill)
 
     # sheet1_mode, sheet1_avg = calculate_mode_and_average(sheet1, "selisih_menit")
-    sheet2_mode, sheet2_avg = calculate_mode_and_average(
-        sheet2, "selisih_menit")
-    sheet3_mode, sheet3_avg = calculate_mode_and_average(
-        sheet3, "selisih_menit")
-    sheet4_mode, sheet4_avg = calculate_mode_and_average(
-        sheet4, "selisih_menit")
+    sheet2_mode, sheet2_avg = calculate_mode_and_average(sheet2, "selisih_menit")
+    sheet3_mode, sheet3_avg = calculate_mode_and_average(sheet3, "selisih_menit")
+    sheet4_mode, sheet4_avg = calculate_mode_and_average(sheet4, "selisih_menit")
+
+
 
     summary_sheet = workbook.create_sheet(title="Summary")
-    max_row_terbanyak = max(
-        sheet1.max_row - 1, sheet2.max_row - 1, sheet3.max_row - 1, sheet4.max_row - 1)
+    max_row_terbanyak = max(sheet1.max_row - 1, sheet2.max_row - 1, sheet3.max_row - 1, sheet4.max_row - 1)
 
     summary_sheet.append(
-        ["Sheet", "Total Records", "Data Unique", "Info", "Persentase", "Persentase Jumlah Compare", "Modus Selisih Menit", "Rata-Rata Selisih Menit"])
+        ["Sheet", "Total Records", "Data Unique", "Info", "Persentase", "Persentase Jumlah Compare","Modus Selisih Menit", "Rata-Rata Selisih Menit"])
     summary_sheet.append(
         [sheet1_name, sheet1.max_row - 1, len(unique_sheet1), f"-", f"{(sheet1.max_row - 1) / max_row_terbanyak * 100:.2f}%"])
     summary_sheet.append([sheet2_name, sheet2.max_row - 1, len(unique_sheet2), "Akurasi Mediasi DB HIST",
@@ -357,7 +353,7 @@ def highlight_rows_three_sheets(workbook, sheet1_name, sheet2_name, sheet3_name,
                          f"{(sheet3.max_row - 1)/(len(unique_sheet2)+len(unique_sheet2)+len(unique_sheet4)+(sheet3.max_row - 1)) * 100:.2f}%", f"{(sheet3.max_row - 1) / max_row_terbanyak * 100:.2f}%",     sheet3_mode, sheet3_avg])
     summary_sheet.append([sheet4_name, sheet4.max_row - 1, len(unique_sheet4), "Akurasi Mediasi DB RUAS",
                          f"{(sheet4.max_row - 1)/(len(unique_sheet1)+len(unique_sheet2)+len(unique_sheet3)+(sheet4.max_row - 1)) * 100:.2f}%", f"{(sheet4.max_row - 1) / max_row_terbanyak * 100:.2f}%",     sheet4_mode, sheet4_avg])
-    summary_sheet.append(['Waktu Tarik', timenow, '', ''])
+    summary_sheet.append(['Waktu Tarik',timenow,'',''])
     summary_sheet.append(['Daftar Kartu'])
     for a in card_number:
         summary_sheet.append([a])
@@ -434,6 +430,7 @@ try:
                             AND tgl_transaksi <= CURDATE();
                         """
 
+
                 cursor.execute(query)
                 columns = [col[0] for col in cursor.description]
                 results = cursor.fetchall()
@@ -459,24 +456,8 @@ try:
     print(f"Checking DB Center HIST: {db_name}")
 
     columns = [col[0] for col in cursor.description]
-    # query2_results.extend([convert_for_json(dict(zip(columns, row)))
-    #                       for row in cursor.fetchall()])
-    query2_results.extend([
-        convert_for_json(
-            dict(
-                zip(
-                    columns,
-                    [
-                        f"0{value}" if col == "no_kartu" and str(
-                            value).startswith("1") else value
-                        for col, value in zip(columns, row)
-                    ]
-                )
-            )
-        )
-        for row in cursor.fetchall()
-    ])
-
+    query2_results.extend([convert_for_json(dict(zip(columns, row)))
+                          for row in cursor.fetchall()])
 
 finally:
     cursor.close()
@@ -574,23 +555,8 @@ for credential in credentials:
                     columns = [col[0] for col in cursor.description]
                     results = cursor.fetchall()
                     if results:
-                        # query4_results.extend(
-                        #     [convert_for_json(dict(zip(columns, row))) for row in results])
-                        query4_results.extend([
-                            convert_for_json(
-                                dict(
-                                    zip(
-                                        columns,
-                                        [
-                                            f"0{value}" if col == "no_kartu" and str(
-                                                value).startswith("1") else value
-                                            for col, value in zip(columns, row)
-                                        ]
-                                    )
-                                )
-                            )
-                            for row in cursor.fetchall()
-                        ])
+                        query4_results.extend(
+                            [convert_for_json(dict(zip(columns, row))) for row in results])
                 except TimeoutError:
                     print(
                         f"Timeout: Query for database {db_name} took too long.")
