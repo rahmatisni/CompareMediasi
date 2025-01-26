@@ -7,7 +7,7 @@ from decimal import Decimal
 from openpyxl import Workbook
 from openpyxl.styles import PatternFill
 
-scard_number = [
+card_number = [
     '6032982888011432',
     '6032981030212971',
     '6032982601347550',
@@ -38,7 +38,7 @@ scard_number = [
     '6032986082866459'
 ]
 
-card_number = ['6032984041529904','6032982540917745','0145008201654166']
+scard_number = ['6032984041529904','6032982540917745','0145008201654166']
 
 with open('mediasi.json', 'r') as f:
     credentials = json.load(f)
