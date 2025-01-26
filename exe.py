@@ -399,7 +399,10 @@ try:
                 query = f"""
                             SELECT
                             id,
-                            etoll_id as 'no_kartu',
+                            CASE 
+                                WHEN LEFT(etoll_id, 1) = '1' THEN CONCAT('0', etoll_id)
+                                ELSE etoll_id
+                                END AS no_kartu
                             ruas_id,
                             asal_gerbang_id,
                             gerbang_id,
@@ -428,7 +431,7 @@ try:
                             AND etoll_hash != 0
                             AND tgl_transaksi >= DATE_FORMAT(CURDATE(), '%Y-%m-01')
                             AND tgl_transaksi <= CURDATE();
-                        """
+                    """
 
 
                 cursor.execute(query)
@@ -521,7 +524,10 @@ for credential in credentials:
                     query = f"""
                             SELECT
                             id,
-                            etoll_id as 'no_kartu',
+                            CASE 
+                                WHEN LEFT(etoll_id, 1) = '1' THEN CONCAT('0', etoll_id)
+                                ELSE etoll_id
+                                END AS no_kartu
                             ruas_id,
                             asal_gerbang_id,
                             gerbang_id,
