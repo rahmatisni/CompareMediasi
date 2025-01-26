@@ -402,7 +402,7 @@ try:
                             CASE 
                                 WHEN LEFT(etoll_id, 1) = '1' THEN CONCAT('0', etoll_id)
                                 ELSE etoll_id
-                                END AS no_kartu
+                                END AS no_kartu,
                             ruas_id,
                             asal_gerbang_id,
                             gerbang_id,
@@ -527,7 +527,7 @@ for credential in credentials:
                             CASE 
                                 WHEN LEFT(etoll_id, 1) = '1' THEN CONCAT('0', etoll_id)
                                 ELSE etoll_id
-                                END AS no_kartu
+                                END AS no_kartu,
                             ruas_id,
                             asal_gerbang_id,
                             gerbang_id,
