@@ -574,8 +574,23 @@ for credential in credentials:
                     columns = [col[0] for col in cursor.description]
                     results = cursor.fetchall()
                     if results:
-                        query4_results.extend(
-                            [convert_for_json(dict(zip(columns, row))) for row in results])
+                        # query4_results.extend(
+                        #     [convert_for_json(dict(zip(columns, row))) for row in results])
+                        query4_results.extend([
+                            convert_for_json(
+                                dict(
+                                    zip(
+                                        columns,
+                                        [
+                                            f"0{value}" if col == "no_kartu" and str(
+                                                value).startswith("1") else value
+                                            for col, value in zip(columns, row)
+                                        ]
+                                    )
+                                )
+                            )
+                            for row in cursor.fetchall()
+                        ])
                 except TimeoutError:
                     print(
                         f"Timeout: Query for database {db_name} took too long.")
