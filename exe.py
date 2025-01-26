@@ -38,13 +38,21 @@ scard_number = [
     '6032986082866459'
 ]
 
-card_number = ['6032984041529904','6032982540917745']
+card_number = ['6032984041529904','6032982540917745','0145008201654166']
 
 with open('mediasi.json', 'r') as f:
     credentials = json.load(f)
 
 today_date = datetime.now().strftime("%Y%m%d")  # Format: YYYYMMDD
 timenow = datetime.now()
+new_card_numbers = [card[1:] for card in card_number if card.startswith('0')]
+
+# Menggabungkan dengan daftar yang sudah ada
+card_number.extend(new_card_numbers)
+
+# Menampilkan hasil
+print(card_number)
+card_number_str = ', '.join(f"'{cn}'" for cn in card_number)
 
 # Timeout handler function
 
@@ -346,20 +354,18 @@ def highlight_rows_three_sheets(workbook, sheet1_name, sheet2_name, sheet3_name,
     summary_sheet.append([sheet4_name, sheet4.max_row - 1, len(unique_sheet4), "Akurasi Mediasi DB RUAS",
                          f"{(sheet4.max_row - 1)/(len(unique_sheet1)+len(unique_sheet2)+len(unique_sheet3)+(sheet4.max_row - 1)) * 100:.2f}%", f"{(sheet4.max_row - 1) / max_row_terbanyak * 100:.2f}%",     sheet4_mode, sheet4_avg])
     summary_sheet.append(['Waktu Tarik',timenow,'',''])
+    summary_sheet.append(['Daftar Kartu'])
+    for a in card_number:
+        summary_sheet.append([a])
+
+
 # Main execution
 # card_number = input("Masukkan nomor kartu:
 # Daftar nomor kartu
 
 
 # Menambahkan data baru dengan menghapus '0' di awal
-new_card_numbers = [card[1:] for card in card_number if card.startswith('0')]
 
-# Menggabungkan dengan daftar yang sudah ada
-card_number.extend(new_card_numbers)
-
-# Menampilkan hasil
-print(card_number)
-card_number_str = ', '.join(f"'{cn}'" for cn in card_number)
 
 # Primary connection
 conn = mysql.connector.connect(
